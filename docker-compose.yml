@@ -1,0 +1,17 @@
+# Spin up PostgreSQL quickly:  docker compose up -d
+services:
+  db:
+    image: postgres:16
+    container_name: patient_doctor_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: patient_doctor_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

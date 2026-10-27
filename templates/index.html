@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MediLink</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%231d4ed8'/%3E%3Cpath d='M32 50S12 38 12 23a11 11 0 0 1 20-7 11 11 0 0 1 20 7c0 15-20 27-20 27Z' fill='%23fff'/%3E%3Cpath d='M28 20h8v8h8v8h-8v8h-8v-8h-8v-8h8Z' fill='%230f9f9a'/%3E%3C/svg%3E">
+<style>
+:root{--bg:#f5f8fc;--card:#fff;--ink:#17233c;--mute:#71809a;--line:#e2e8f2;--brand:#2563eb;--brand-dark:#1d4ed8;--brand2:#0f9f9a;--danger:#dc2626;--ok:#16a34a;--shadow:0 12px 35px rgba(30,55,95,.08)}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:radial-gradient(circle at 8% 0%,#e8f1ff 0,transparent 28%),var(--bg);color:var(--ink)}
+.hidden{display:none!important}
+.brand-mark{display:flex;align-items:center;gap:10px}.brand-mark small{display:block;opacity:.76;font-size:11px;font-weight:500;letter-spacing:.4px}
+header{background:linear-gradient(110deg,#1d4ed8,var(--brand2));color:#fff;padding:16px 28px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 6px 20px rgba(29,78,216,.18)}
+header h1{margin:0;font-size:21px;letter-spacing:.3px}
+header span{opacity:.9;margin-right:14px;font-size:14px}
+main{max-width:1120px;margin:32px auto;padding:0 20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:var(--shadow);margin-bottom:22px}
+h2{margin:0 0 6px;font-size:18px;letter-spacing:-.2px}.card-subtitle{color:var(--mute);font-size:13px;margin:0 0 20px}
+label{display:block;font-size:12px;font-weight:700;color:#52617c;margin-bottom:7px}.required{color:var(--danger);margin-left:3px}
+input,select,textarea{width:100%;padding:11px 13px;border:1px solid var(--line);border-radius:10px;font:inherit;background:#fff;color:var(--ink);transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus,textarea:focus{outline:0;border-color:var(--brand);box-shadow:0 0 0 4px rgba(37,99,235,.12)}
+input:invalid:not(:placeholder-shown),select:invalid{border-color:#fca5a5}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-bottom:18px}
+button{border:0;border-radius:10px;padding:11px 19px;font:inherit;font-weight:700;cursor:pointer;background:var(--brand);color:#fff;transition:transform .15s,box-shadow .15s,filter .15s}
+button:hover{filter:brightness(1.06);box-shadow:0 5px 14px rgba(37,99,235,.22);transform:translateY(-1px)}
+button.ghost{background:rgba(255,255,255,.16);box-shadow:none;padding:8px 13px}
+button.del{background:#fff1f2;color:var(--danger);padding:7px 12px;font-size:12px;box-shadow:none}
+.tabs{display:flex;gap:9px;margin-bottom:22px;flex-wrap:wrap}
+.tab{background:#fff;color:var(--mute);border:1px solid var(--line);box-shadow:0 3px 10px rgba(30,50,90,.04)}
+.tab.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;color:var(--mute);font-size:12px;text-transform:uppercase;letter-spacing:.5px;padding:8px 10px;border-bottom:1px solid var(--line)}
+td{padding:11px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+.tablewrap{overflow-x:auto}
+.empty{color:var(--mute);text-align:center;padding:28px 22px;background:#f8fafc;border-radius:12px}
+.badge{background:#e0ecff;color:var(--brand);border-radius:20px;padding:2px 10px;font-size:12px;font-weight:600}
+#auth{max-width:440px;margin:62px auto}
+#auth h2{font-size:25px;text-align:center;letter-spacing:-.5px}
+#auth p{text-align:center;color:var(--mute);margin-top:0}
+#auth .field{margin-bottom:14px}
+#auth button.main{width:100%}
+.switch{text-align:center;margin-top:14px;font-size:14px;color:var(--mute)}
+.switch a{color:var(--brand);cursor:pointer;font-weight:600}
+#auth .helper{font-size:12px;color:var(--mute);text-align:left;margin:6px 0 0}
+.page-intro{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;margin:0 0 22px}.page-intro h2{font-size:25px;margin:0}.page-intro p{color:var(--mute);margin:7px 0 0;font-size:14px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px}.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px 17px;box-shadow:0 5px 18px rgba(30,50,90,.05)}.stat strong{display:block;font-size:23px;margin-top:4px}.stat span{color:var(--mute);font-size:12px;font-weight:600}
+@media(max-width:620px){header{padding:14px 16px}header span{display:none}main{padding:0 14px;margin-top:22px}.card{padding:18px}.page-intro{display:block}.stats{gap:8px}.stat{padding:12px}.stat strong{font-size:19px}.tabs{gap:6px}.tab{padding:9px 12px;font-size:13px}}
+#toast{position:fixed;bottom:22px;right:22px;padding:13px 18px;border-radius:12px;color:#fff;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.2);max-width:360px;z-index:9}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand-mark"><span style="font-size:25px">🏥</span><div><h1>MediLink</h1><small>Patient care, connected</small></div></div>
+  <div id="userbox" class="hidden"><span id="uname"></span><button class="ghost" onclick="logout()">Logout</button></div>
+</header>
+
+<main>
+  <!-- AUTH -->
+  <section id="auth" class="card">
+    <h2 id="authTitle">Welcome back</h2>
+    <p id="authSub">Log in to manage patients and doctors</p>
+    <div class="field hidden" id="nameField"><label for="aName">Full name <span class="required">*</span></label><input id="aName" required autocomplete="name" placeholder="Your full name"></div>
+    <div class="field"><label for="aEmail">Email <span class="required">*</span></label><input id="aEmail" type="email" required autocomplete="email" placeholder="you@example.com"></div>
+    <div class="field"><label for="aPass">Password <span class="required">*</span></label><input id="aPass" type="password" minlength="8" required autocomplete="current-password" placeholder="At least 8 characters" onkeydown="if(event.key==='Enter')submitAuth()"></div>
+    <p class="helper">Fields marked <span class="required">*</span> are required.</p>
+    <button class="main" id="authBtn" onclick="submitAuth()">Log in</button>
+    <div class="switch" id="authSwitch"></div>
+  </section>
+
+  <!-- APP -->
+  <section id="app" class="hidden">
+    <div class="page-intro"><div><h2>Your care dashboard</h2><p>Keep patient records organized and care teams connected.</p></div></div>
+    <div class="stats"><div class="stat"><span>MY PATIENTS</span><strong id="patientCount">0</strong></div><div class="stat"><span>DOCTORS IN DIRECTORY</span><strong id="doctorCount">0</strong></div><div class="stat"><span>ACTIVE ASSIGNMENTS</span><strong id="mappingCount">0</strong></div></div>
+    <div class="tabs">
+      <button class="tab active" data-tab="patients">🧑 Patients</button>
+      <button class="tab" data-tab="doctors">🩺 Doctors</button>
+      <button class="tab" data-tab="mappings">🔗 Assignments</button>
+    </div>
+
+    <div id="tab-patients">
+      <div class="card"><h2>Add patient</h2><p class="card-subtitle">Create a private record for a patient you manage.</p>
+        <div class="grid">
+          <div><label for="pName">Full name <span class="required">*</span></label><input id="pName" required autocomplete="name" placeholder="Patient's full name"></div>
+          <div><label for="pAge">Age <span class="required">*</span></label><input id="pAge" type="number" min="0" max="150" required placeholder="0–150"></div>
+          <div><label for="pGender">Gender <span class="required">*</span></label><select id="pGender" required><option value="M">Male</option><option value="F">Female</option><option value="O">Other</option></select></div>
+          <div><label for="pPhone">Phone</label><input id="pPhone" type="tel" autocomplete="tel" placeholder="Optional"></div>
+          <div><label for="pAddress">Address</label><input id="pAddress" autocomplete="street-address" placeholder="Optional"></div>
+          <div><label for="pHistory">Medical history</label><input id="pHistory" placeholder="Optional"></div>
+        </div>
+        <button onclick="addPatient()">Add patient</button>
+      </div>
+      <div class="card"><h2>My patients</h2><div class="tablewrap" id="patientList"></div></div>
+    </div>
+
+    <div id="tab-doctors" class="hidden">
+      <div class="card"><h2>Add doctor</h2><p class="card-subtitle">Add a trusted provider to the shared doctor directory.</p>
+        <div class="grid">
+          <div><label for="dName">Full name <span class="required">*</span></label><input id="dName" required placeholder="Doctor's full name"></div>
+          <div><label for="dSpec">Specialization <span class="required">*</span></label><select id="dSpec" required>
+            <option value="general">General Medicine</option><option value="cardiology">Cardiology</option><option value="dermatology">Dermatology</option>
+            <option value="neurology">Neurology</option><option value="orthopedics">Orthopedics</option><option value="pediatrics">Pediatrics</option>
+            <option value="psychiatry">Psychiatry</option><option value="other">Other</option></select></div>
+          <div><label for="dEmail">Email <span class="required">*</span></label><input id="dEmail" type="email" required autocomplete="email" placeholder="doctor@example.com"></div>
+          <div><label for="dPhone">Phone</label><input id="dPhone" type="tel" autocomplete="tel" placeholder="Optional"></div>
+          <div><label>Experience (years)</label><input id="dExp" type="number" min="0" value="0"></div>
+        </div>
+        <button onclick="addDoctor()">Add doctor</button>
+      </div>
+      <div class="card"><h2>All doctors</h2><div class="tablewrap" id="doctorList"></div></div>
+    </div>
+
+    <div id="tab-mappings" class="hidden">
+      <div class="card"><h2>Assign a doctor to a patient</h2><p class="card-subtitle">Connect a patient with the right care provider.</p>
+        <div class="grid">
+          <div><label for="mPatient">Patient <span class="required">*</span></label><select id="mPatient" required></select></div>
+          <div><label for="mDoctor">Doctor <span class="required">*</span></label><select id="mDoctor" required></select></div>
+        </div>
+        <button onclick="assign()">Assign</button>
+      </div>
+      <div class="card"><h2>Current assignments</h2><div class="tablewrap" id="mappingList"></div></div>
+    </div>
+  </section>
+</main>
+<div id="toast" class="hidden"></div>
+
+<script>
+const API = "/api";
+let token = localStorage.getItem("access");
+let mode = "login";
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+function toast(msg, ok = true) {
+  const t = $("toast");
+  t.textContent = msg; t.style.background = ok ? "var(--ok)" : "var(--danger)";
+  t.classList.remove("hidden"); clearTimeout(t._h); t._h = setTimeout(() => t.classList.add("hidden"), 3500);
+}
+
+function fmtErr(d) {
+  if (!d || typeof d !== "object") return "Something went wrong";
+  if (d.detail) return d.detail;
+  return Object.entries(d).map(([k, v]) => `${k === "non_field_errors" ? "" : k + ": "}${[].concat(v).join(" ")}`).join(" | ");
+}
+
+async function api(path, method = "GET", body) {
+  const res = await fetch(API + path, {
+    method,
+    headers: { "Content-Type": "application/json", ...(token ? { Authorization: "Bearer " + token } : {}) },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  if (res.status === 401 && token) { logout(); throw new Error("Session expired, please log in again"); }
+  if (res.status === 204) return null;
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(fmtErr(data));
+  return data;
+}
+const run = async fn => { try { await fn(); } catch (e) { toast(e.message, false); } };
+
+/* ---------- Auth ---------- */
+function setMode(m) {
+  mode = m;
+  const login = m === "login";
+  $("authTitle").textContent = login ? "Welcome back" : "Create your account";
+  $("authSub").textContent = login ? "Log in to manage patients and doctors" : "Register to get started";
+  $("authBtn").textContent = login ? "Log in" : "Register";
+  $("nameField").classList.toggle("hidden", login);
+  $("authSwitch").innerHTML = login
+    ? `New here? <a onclick="setMode('register')">Create an account</a>`
+    : `Already registered? <a onclick="setMode('login')">Log in</a>`;
+}
+
+function submitAuth() {
+  run(async () => {
+    if (!validateFields(mode === "register" ? ["aName", "aEmail", "aPass"] : ["aEmail", "aPass"])) return;
+    const email = $("aEmail").value.trim(), password = $("aPass").value;
+    if (mode === "register") {
+      await api("/auth/register/", "POST", { name: $("aName").value.trim(), email, password });
+      toast("Registered! Logging you in…");
+    }
+    const d = await api("/auth/login/", "POST", { email, password });
+    token = d.tokens.access;
+    localStorage.setItem("access", token);
+    localStorage.setItem("uname", d.user.name);
+    showApp();
+  });
+}
+
+function logout() {
+  token = null; localStorage.removeItem("access"); localStorage.removeItem("uname");
+  $("app").classList.add("hidden"); $("userbox").classList.add("hidden");
+  $("auth").classList.remove("hidden"); setMode("login");
+}
+
+function showApp() {
+  $("auth").classList.add("hidden"); $("app").classList.remove("hidden");
+  $("userbox").classList.remove("hidden");
+  $("uname").textContent = "👤 " + (localStorage.getItem("uname") || "");
+  loadAll();
+}
+
+/* ---------- Tabs ---------- */
+document.querySelectorAll(".tab").forEach(b => b.onclick = () => {
+  document.querySelectorAll(".tab").forEach(x => x.classList.toggle("active", x === b));
+  ["patients", "doctors", "mappings"].forEach(t => $("tab-" + t).classList.toggle("hidden", t !== b.dataset.tab));
+});
+
+/* ---------- Rendering ---------- */
+let patients = [], doctors = [], mappings = [];
+const table = (heads, rows) => rows.length
+  ? `<table><thead><tr>${heads.map(h => `<th>${h}</th>`).join("")}</tr></thead><tbody>${rows.join("")}</tbody></table>`
+  : `<div class="empty">Nothing here yet.</div>`;
+const GENDER = { M: "Male", F: "Female", O: "Other" };
+
+function render() {
+  $("patientCount").textContent = patients.length;
+  $("doctorCount").textContent = doctors.length;
+  $("mappingCount").textContent = mappings.length;
+  $("patientList").innerHTML = table(["Name", "Age", "Gender", "Phone", "Medical history", ""],
+    patients.map(p => `<tr><td><b>${esc(p.name)}</b></td><td>${p.age}</td><td>${GENDER[p.gender]}</td><td>${esc(p.phone)}</td><td>${esc(p.medical_history)}</td>
+      <td><button class="del" onclick="removePatient(${p.id})">Delete</button></td></tr>`));
+  $("doctorList").innerHTML = table(["Name", "Specialization", "Email", "Phone", "Experience", ""],
+    doctors.map(d => `<tr><td><b>Dr. ${esc(d.name)}</b></td><td><span class="badge">${esc(d.specialization)}</span></td><td>${esc(d.email)}</td><td>${esc(d.phone)}</td><td>${d.experience_years} yrs</td>
+      <td><button class="del" onclick="removeDoctor(${d.id})">Delete</button></td></tr>`));
+  $("mappingList").innerHTML = table(["Patient", "Doctor", "Specialization", ""],
+    mappings.map(m => `<tr><td><b>${esc(m.patient.name)}</b></td><td>Dr. ${esc(m.doctor.name)}</td><td><span class="badge">${esc(m.doctor.specialization)}</span></td>
+      <td><button class="del" onclick="removeMapping(${m.id})">Remove</button></td></tr>`));
+  $("mPatient").innerHTML = patients.length ? patients.map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join("") : `<option value="">Add a patient first</option>`;
+  $("mDoctor").innerHTML = doctors.length ? doctors.map(d => `<option value="${d.id}">Dr. ${esc(d.name)} (${esc(d.specialization)})</option>`).join("") : `<option value="">Add a doctor first</option>`;
+}
+
+function loadAll() {
+  run(async () => {
+    [patients, doctors, mappings] = await Promise.all([api("/patients/"), api("/doctors/"), api("/mappings/")]);
+    render();
+  });
+}
+
+/* ---------- Actions ---------- */
+const val = id => $(id).value.trim();
+const clear = (...ids) => ids.forEach(i => { $(i).value = ""; });
+function validateFields(ids) {
+  for (const id of ids) {
+    const field = $(id);
+    if (!field.value.trim()) {
+      field.focus();
+      toast("Please complete all required fields.", false);
+      return false;
+    }
+    if (!field.checkValidity()) {
+      field.focus();
+      toast(field.validationMessage, false);
+      return false;
+    }
+  }
+  return true;
+}
+
+function addPatient() {
+  run(async () => {
+    if (!validateFields(["pName", "pAge", "pGender"])) return;
+    await api("/patients/", "POST", { name: val("pName"), age: val("pAge"), gender: $("pGender").value, phone: val("pPhone"), address: val("pAddress"), medical_history: val("pHistory") });
+    clear("pName", "pAge", "pPhone", "pAddress", "pHistory"); toast("Patient added"); loadAll();
+  });
+}
+function addDoctor() {
+  run(async () => {
+    if (!validateFields(["dName", "dSpec", "dEmail"])) return;
+    await api("/doctors/", "POST", { name: val("dName"), specialization: $("dSpec").value, email: val("dEmail"), phone: val("dPhone"), experience_years: val("dExp") || 0 });
+    clear("dName", "dEmail", "dPhone"); $("dExp").value = 0; toast("Doctor added"); loadAll();
+  });
+}
+function assign() {
+  run(async () => {
+    if (!validateFields(["mPatient", "mDoctor"])) return;
+    await api("/mappings/", "POST", { patient: $("mPatient").value, doctor: $("mDoctor").value });
+    toast("Doctor assigned"); loadAll();
+  });
+}
+const remover = (path, msg) => id => { if (confirm("Are you sure?")) run(async () => { await api(`${path}/${id}/`, "DELETE"); toast(msg); loadAll(); }); };
+const removePatient = remover("/patients", "Patient deleted");
+const removeDoctor = remover("/doctors", "Doctor deleted");
+const removeMapping = remover("/mappings", "Assignment removed");
+
+/* ---------- Init ---------- */
+setMode("login");
+if (token) showApp();
+</script>
+</body>
+</html>
