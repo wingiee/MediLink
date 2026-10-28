@@ -26,6 +26,15 @@ button{border:0;border-radius:10px;padding:11px 19px;font:inherit;font-weight:70
 button:hover{filter:brightness(1.06);box-shadow:0 5px 14px rgba(37,99,235,.22);transform:translateY(-1px)}
 button.ghost{background:rgba(255,255,255,.16);box-shadow:none;padding:8px 13px}
 button.del{background:#fff1f2;color:var(--danger);padding:7px 12px;font-size:12px;box-shadow:none}
+button.edit{background:#eff6ff;color:var(--brand);padding:7px 12px;font-size:12px;box-shadow:none}
+.row-actions{display:flex;gap:7px;flex-wrap:wrap}
+.modal-backdrop{position:fixed;inset:0;background:rgba(23,35,60,.45);display:flex;align-items:center;justify-content:center;padding:20px;z-index:8}
+.modal{width:min(620px,100%);background:var(--card);border-radius:18px;padding:24px;box-shadow:0 18px 50px rgba(23,35,60,.25)}
+.modal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.modal-head h2{margin:0}.modal-close{background:transparent;color:var(--mute);padding:3px 8px;font-size:24px;box-shadow:none}
+.modal-close:hover{color:var(--ink);box-shadow:none}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
+.modal-actions .cancel{background:#eef2f7;color:var(--ink);box-shadow:none}
 .tabs{display:flex;gap:9px;margin-bottom:22px;flex-wrap:wrap}
 .tab{background:#fff;color:var(--mute);border:1px solid var(--line);box-shadow:0 3px 10px rgba(30,50,90,.04)}
 .tab.active{background:var(--brand);color:#fff;border-color:var(--brand)}
@@ -124,6 +133,30 @@ td{padding:11px 10px;border-bottom:1px solid var(--line);vertical-align:top}
   </section>
 </main>
 <div id="toast" class="hidden"></div>
+<div id="editModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="editTitle">
+  <form class="modal" onsubmit="saveEdit(event)">
+    <div class="modal-head"><h2 id="editTitle">Edit record</h2><button type="button" class="modal-close" aria-label="Close" onclick="closeEdit()">×</button></div>
+    <div id="editPatientFields" class="grid hidden">
+      <div><label for="editPatientName">Full name <span class="required">*</span></label><input id="editPatientName" required></div>
+      <div><label for="editPatientAge">Age <span class="required">*</span></label><input id="editPatientAge" type="number" min="0" max="150" required></div>
+      <div><label for="editPatientGender">Gender <span class="required">*</span></label><select id="editPatientGender" required><option value="M">Male</option><option value="F">Female</option><option value="O">Other</option></select></div>
+      <div><label for="editPatientPhone">Phone</label><input id="editPatientPhone" type="tel"></div>
+      <div><label for="editPatientAddress">Address</label><input id="editPatientAddress"></div>
+      <div><label for="editPatientHistory">Medical history</label><input id="editPatientHistory"></div>
+    </div>
+    <div id="editDoctorFields" class="grid hidden">
+      <div><label for="editDoctorName">Full name <span class="required">*</span></label><input id="editDoctorName" required></div>
+      <div><label for="editDoctorSpec">Specialization <span class="required">*</span></label><select id="editDoctorSpec" required>
+        <option value="general">General Medicine</option><option value="cardiology">Cardiology</option><option value="dermatology">Dermatology</option>
+        <option value="neurology">Neurology</option><option value="orthopedics">Orthopedics</option><option value="pediatrics">Pediatrics</option>
+        <option value="psychiatry">Psychiatry</option><option value="other">Other</option></select></div>
+      <div><label for="editDoctorEmail">Email <span class="required">*</span></label><input id="editDoctorEmail" type="email" required></div>
+      <div><label for="editDoctorPhone">Phone</label><input id="editDoctorPhone" type="tel"></div>
+      <div><label for="editDoctorExp">Experience (years)</label><input id="editDoctorExp" type="number" min="0"></div>
+    </div>
+    <div class="modal-actions"><button type="button" class="cancel" onclick="closeEdit()">Cancel</button><button type="submit">Save changes</button></div>
+  </form>
+</div>
 
 <script>
 const API = "/api";
@@ -219,10 +252,10 @@ function render() {
   $("mappingCount").textContent = mappings.length;
   $("patientList").innerHTML = table(["Name", "Age", "Gender", "Phone", "Medical history", ""],
     patients.map(p => `<tr><td><b>${esc(p.name)}</b></td><td>${p.age}</td><td>${GENDER[p.gender]}</td><td>${esc(p.phone)}</td><td>${esc(p.medical_history)}</td>
-      <td><button class="del" onclick="removePatient(${p.id})">Delete</button></td></tr>`));
+      <td><div class="row-actions"><button class="edit" onclick="openPatientEdit(${p.id})">Edit</button><button class="del" onclick="removePatient(${p.id})">Delete</button></div></td></tr>`));
   $("doctorList").innerHTML = table(["Name", "Specialization", "Email", "Phone", "Experience", ""],
     doctors.map(d => `<tr><td><b>Dr. ${esc(d.name)}</b></td><td><span class="badge">${esc(d.specialization)}</span></td><td>${esc(d.email)}</td><td>${esc(d.phone)}</td><td>${d.experience_years} yrs</td>
-      <td><button class="del" onclick="removeDoctor(${d.id})">Delete</button></td></tr>`));
+      <td><div class="row-actions"><button class="edit" onclick="openDoctorEdit(${d.id})">Edit</button><button class="del" onclick="removeDoctor(${d.id})">Delete</button></div></td></tr>`));
   $("mappingList").innerHTML = table(["Patient", "Doctor", "Specialization", ""],
     mappings.map(m => `<tr><td><b>${esc(m.patient.name)}</b></td><td>Dr. ${esc(m.doctor.name)}</td><td><span class="badge">${esc(m.doctor.specialization)}</span></td>
       <td><button class="del" onclick="removeMapping(${m.id})">Remove</button></td></tr>`));
@@ -269,6 +302,55 @@ function addDoctor() {
     if (!validateFields(["dName", "dSpec", "dEmail"])) return;
     await api("/doctors/", "POST", { name: val("dName"), specialization: $("dSpec").value, email: val("dEmail"), phone: val("dPhone"), experience_years: val("dExp") || 0 });
     clear("dName", "dEmail", "dPhone"); $("dExp").value = 0; toast("Doctor added"); loadAll();
+  });
+}
+let editingType = null, editingId = null;
+function openPatientEdit(id) {
+  const patient = patients.find(p => p.id === id);
+  if (!patient) return;
+  editingType = "patient"; editingId = id;
+  $("editTitle").textContent = "Edit patient";
+  $("editPatientFields").classList.remove("hidden"); $("editDoctorFields").classList.add("hidden");
+  $("editPatientFields").querySelectorAll("input, select").forEach(field => field.disabled = false);
+  $("editDoctorFields").querySelectorAll("input, select").forEach(field => field.disabled = true);
+  $("editPatientName").value = patient.name; $("editPatientAge").value = patient.age;
+  $("editPatientGender").value = patient.gender; $("editPatientPhone").value = patient.phone || "";
+  $("editPatientAddress").value = patient.address || ""; $("editPatientHistory").value = patient.medical_history || "";
+  $("editModal").classList.remove("hidden"); $("editPatientName").focus();
+}
+function openDoctorEdit(id) {
+  const doctor = doctors.find(d => d.id === id);
+  if (!doctor) return;
+  editingType = "doctor"; editingId = id;
+  $("editTitle").textContent = "Edit doctor";
+  $("editPatientFields").classList.add("hidden"); $("editDoctorFields").classList.remove("hidden");
+  $("editPatientFields").querySelectorAll("input, select").forEach(field => field.disabled = true);
+  $("editDoctorFields").querySelectorAll("input, select").forEach(field => field.disabled = false);
+  $("editDoctorName").value = doctor.name; $("editDoctorSpec").value = doctor.specialization;
+  $("editDoctorEmail").value = doctor.email; $("editDoctorPhone").value = doctor.phone || "";
+  $("editDoctorExp").value = doctor.experience_years ?? 0;
+  $("editModal").classList.remove("hidden"); $("editDoctorName").focus();
+}
+function closeEdit() {
+  $("editModal").classList.add("hidden"); editingType = null; editingId = null;
+}
+function saveEdit(event) {
+  event.preventDefault();
+  run(async () => {
+    if (editingType === "patient") {
+      await api(`/patients/${editingId}/`, "PATCH", {
+        name: val("editPatientName"), age: val("editPatientAge"), gender: $("editPatientGender").value,
+        phone: val("editPatientPhone"), address: val("editPatientAddress"), medical_history: val("editPatientHistory")
+      });
+      toast("Patient updated");
+    } else if (editingType === "doctor") {
+      await api(`/doctors/${editingId}/`, "PATCH", {
+        name: val("editDoctorName"), specialization: $("editDoctorSpec").value, email: val("editDoctorEmail"),
+        phone: val("editDoctorPhone"), experience_years: val("editDoctorExp") || 0
+      });
+      toast("Doctor updated");
+    }
+    closeEdit(); loadAll();
   });
 }
 function assign() {
