@@ -24,6 +24,24 @@ that lets users register, manage patients and doctors, and assign doctors to pat
 
 ---
 
+## 🖥️ Screenshots
+
+### Login
+
+![MediLink login page](screenshots/login.png)
+
+### Edit patient
+
+![Edit patient dialog](screenshots/patients.png)
+
+### Edit doctor
+
+![Edit doctor dialog](screenshots/doctors.png)
+
+### Patient-doctor assignments
+
+![Patient-doctor assignments](screenshots/assignments.png)
+
 ## 📁 Project Structure
 
 ```
